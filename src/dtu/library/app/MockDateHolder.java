@@ -30,13 +30,4 @@ public class MockDateHolder {
 		nextDate.add(Calendar.DAY_OF_YEAR, days);
 		setDate(nextDate);
 	}
-	
-	public Calendar getDate(){
-		System.out.println("------------");
-		System.out.println(dateServer.getDate());
-		System.out.println("-------------");
-		
-		
-		return dateServer.getDate();
-	}
 }

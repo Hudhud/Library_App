@@ -31,8 +31,6 @@ public class Book {
 	}
 	
 	public Calendar getDateBooked() {
-		System.out.println("****************");
-		System.out.println(calendar.getTime());
 		return calendar;
 		
 	}

@@ -12,6 +12,8 @@ public class LibraryApp {
 	private List<Book> bookStorage = new ArrayList<Book>();
 	private List<User> userStorage = new ArrayList<User>();
 	private DateServer dateServer = new DateServer();
+	private EmailServer emailServer = new EmailServer();
+	private Helper helper;
 
 	public List<Book> getBooks() {
 		return bookStorage;
@@ -64,18 +66,40 @@ public class LibraryApp {
 			throw new OperationNotAllowedException("User is already registered");
 
 		getUsers().add(user);
-	} 
+	}
+
+	public void unRegisterUser(User user) throws OperationNotAllowedException {
+		if (isAdminLoggedIn == false)
+			throw new OperationNotAllowedException("Administrator login required");
+
+		if (!getUsers().contains(user))
+			throw new OperationNotAllowedException("User does not exist");
+
+		getUsers().remove(getUsers().indexOf(user));
+	}
+
+	public boolean userExists(User user) {
+		boolean exists = getUsers().contains(user);
+		return exists;
+	}
 
 	public void setDateServer(DateServer dateServer) {
 		this.dateServer = dateServer;
 	}
 
+	public void setEmailServer(EmailServer emailServer) {
+		this.emailServer = emailServer;
+	}
+
 	public Calendar getDate() {
-		System.out.println(dateServer.getDate().getTime());
 		return dateServer.getDate();
 	}
 
-	public void borrowBook(Book book, User user) throws TooManyBooksException {
+	public void borrowBook(Book book, User user) throws OperationNotAllowedException {
+
+		if (userHasOverdueBooks(user) == true || userHasFine(user) == true)
+			throw new OperationNotAllowedException("You are not eligible to borrow a book");
+
 		user.borrowBook(book, getDate());
 	}
 
@@ -94,5 +118,25 @@ public class LibraryApp {
 		if (!adminLoggedIn) {
 			adminLogout();
 		}
+	}
+
+	public boolean userHasFine(User user) {
+		return user.userHasFine();
+	}
+
+	public int getFineForUser(User user) {
+		return user.getUserFine();
+	}
+
+	public void userPaysFine(User user) {
+		user.payFine();
+	}
+
+	public void sendReminder(User user, int books) throws Exception {
+		emailServer.sendMail(user, books);
+	}
+
+	public List<Book> getUserBorrowedBooks(User user) {
+		return user.getBorrowedBooks();
 	}
 }

@@ -13,6 +13,7 @@ import dtu.library.app.ErrorMessageHolder;
 import dtu.library.app.Helper;
 import dtu.library.app.LibraryApp;
 import dtu.library.app.MockDateHolder;
+//import dtu.library.app.MockEmailServerHolder;
 //import dtu.library.app.OperationNotAllowedException;
 import dtu.library.app.OperationNotAllowedException;
 import dtu.library.app.TooManyBooksException;
@@ -27,6 +28,7 @@ public class BookSteps {
 	private ErrorMessageHolder errorMessageHolder;
 	private Helper helper;
 	private MockDateHolder mockDateHolder;
+//	private MockEmailServerHolder emailServerHolder;
 
 //	/*
 //	 * Note that the constructor is apparently never called, but there are no null
@@ -42,11 +44,13 @@ public class BookSteps {
 //	 * This principle is called <em>dependency injection</em>. More information can
 //	 * be found in the "Cucumber for Java" book available online from the DTU Library.
 //	 */
-	public BookSteps(LibraryApp libraryApp, ErrorMessageHolder errorMessageHolder, Helper helper, MockDateHolder mockDateHolder) {
+	public BookSteps(LibraryApp libraryApp, ErrorMessageHolder errorMessageHolder, Helper helper,
+			MockDateHolder mockDateHolder) {
 		this.libraryApp = libraryApp;
 		this.errorMessageHolder = errorMessageHolder;
 		this.helper = helper;
 		this.mockDateHolder = mockDateHolder;
+//		this.emailServerHolder = emailServerHolder;
 	}
 
 	@Given("^I have a book with title \"([^\"]*)\", author \"([^\"]*)\", and signature \"([^\"]*)\"$")
@@ -125,26 +129,85 @@ public class BookSteps {
 	}
 
 	@Given("{int} days have passed")
-	public void days_have_passed(Integer days) {
-		days = 29;
-	    mockDateHolder.advanceDateByDays(days);
+	public void days_have_passed(int days) {
+		mockDateHolder.advanceDateByDays(days);
 	}
 
 	@Given("the fine for one overdue book is {int} DKK")
-	public void the_fine_for_one_overdue_book_is_DKK(Integer fine) {
+	public void the_fine_for_one_overdue_book_is_DKK(int fine) {
 	}
 
 	@Then("the user has overdue books")
 	public void the_user_has_overdue_books() {
-//		System.out.println("dadad " + libraryApp.userHasOverdueBooks(helper.getUser()));
-		
 		assertTrue(libraryApp.userHasOverdueBooks(helper.getUser()));
 	}
 
 	@Then("the user has to pay a fine of {int} DKK")
-	public void the_user_has_to_pay_a_fine_of_DKK(Integer int1) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	public void the_user_has_to_pay_a_fine_of_DKK(int fine) {
+		assertTrue(libraryApp.getFineForUser(helper.getUser()) == fine);
 	}
 
+	@Given("the administrator is signed in")
+	public void the_administrator_is_signed_in() {
+//	   libraryApp.adminLogin("adminadmin");
+	}
+
+	@Then("send a reminder to the user")
+	public void send_a_reminder_to_the_user() {
+//	    emailServerHolder.verifyEmail();
+	}
+
+	@Given("the user has overdue book\\(s)")
+	public void the_user_has_overdue_book_s() throws OperationNotAllowedException {
+		book = new Book("The coding way", "Coder", "Random");
+		helper.setUser(new User("123456", "tester", "randommail"));
+		libraryApp.addBooksToLibrary(Arrays.asList(book));
+		libraryApp.borrowBook(book, helper.getUser());
+		mockDateHolder.advanceDateByDays(29);
+
+	}
+
+	@When("the user borrows a book")
+	public void the_user_borrows_a_book() throws Exception {
+		try {
+			libraryApp.userHasOverdueBooks(helper.getUser());
+			libraryApp.borrowBook(book, helper.getUser());
+		} catch (OperationNotAllowedException e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
+
+	@Then("the user gets an error message {string}")
+	public void throw_an_error_message(String eMessage) {
+		assertEquals(errorMessageHolder.getErrorMessage(), eMessage);
+	}
+
+	@Given("the user has a fine\\(s) of {int}kr")
+	public void theUserHasAFineSOfKr(int fine) throws OperationNotAllowedException {
+		book = new Book("The coding way", "Coder", "Random");
+		helper.setUser(new User("123456", "tester", "randommail"));
+		libraryApp.addBooksToLibrary(Arrays.asList(book));
+		libraryApp.borrowBook(book, helper.getUser());
+		mockDateHolder.advanceDateByDays(29);
+	}
+	
+	@Given("User has an overdue book")
+	public void user_has_an_overdue_book() throws OperationNotAllowedException {
+		book = new Book("The coding way", "Coder", "Random");
+		helper.setUser(new User("123456", "tester", "randommail"));
+		libraryApp.addBooksToLibrary(Arrays.asList(book));
+		libraryApp.borrowBook(book, helper.getUser());
+		mockDateHolder.advanceDateByDays(29);
+	}
+
+	@When("{int} or more days have passed")
+	public void or_more_days_have_passed(int days) {
+		mockDateHolder.advanceDateByDays(days);
+
+	}
+
+	@Then("the user pays his fine")
+	public void the_user_pays_his_fine() {
+	    libraryApp.userPaysFine(helper.getUser());
+	}
 }

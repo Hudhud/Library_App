@@ -18,6 +18,12 @@ public class User {
 
 	private List<Book> borrowedBooks = new ArrayList<Book>();
 
+	private boolean userHasOverdueBook = false;
+
+	private int overdueBooks;
+
+	private int fine;
+
 	public User(String cpr, String name, String email) {
 		this.cpr = cpr;
 		this.name = name;
@@ -51,17 +57,42 @@ public class User {
 
 	public boolean hasOverdueBooks(Calendar currentDate) {
 
-		boolean check = false;
-
 		for (Book book : borrowedBooks) {
 
 			long daysDiff = (currentDate.getTime().getTime() - book.getDateBooked().getTime().getTime())
 					/ (1000 * 60 * 60 * 24);
 
-			if (daysDiff > 28)
-				check = true;
+			if (daysDiff > 28) {
+				userHasOverdueBook = true;
+				overdueBooks++;
+				fine += 100;
+			}
 		}
-		return check;
+		return userHasOverdueBook;
+	}
+
+	public int getUserFine() {
+		return fine;
+	}
+
+	public boolean userHasFine() {
+		if (fine > 0)
+			return true;
+		return false;
+	}
+
+	public void payFine() {
+		fine = 0;
+	}
+
+	public int getOverdueBooks() {
+		return overdueBooks;
+	}
+	
+	public List<Book> getBorrowedBooks(){
+		System.out.println("SS "+ borrowedBooks.size());
+		return borrowedBooks;
+		
 	}
 
 }
