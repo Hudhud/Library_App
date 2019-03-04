@@ -37,6 +37,6 @@
 	<classpathentry kind="lib" path="lib/hamcrest-all-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/mockito-core-2.23.4.jar"/>
 	<classpathentry kind="lib" path="lib/objenesis-2.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/HH-PC/Desktop/jar_files/javax.mail-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail-1.6.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

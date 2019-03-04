@@ -56,13 +56,12 @@ public class User {
 	}
 
 	public boolean hasOverdueBooks(Calendar currentDate) {
-
+		System.out.println(currentDate.getTime());
 		for (Book book : borrowedBooks) {
 
-			long daysDiff = (currentDate.getTime().getTime() - book.getDateBooked().getTime().getTime())
-					/ (1000 * 60 * 60 * 24);
+			long daysDiff = (currentDate.getTime().getTime() - book.getDateBooked().getTime().getTime()) / 1000;
 
-			if (daysDiff > 28) {
+			if (daysDiff > 86400 * 28) {
 				userHasOverdueBook = true;
 				overdueBooks++;
 				fine += 100;
