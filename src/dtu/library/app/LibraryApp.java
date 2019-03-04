@@ -10,6 +10,7 @@ public class LibraryApp {
 
 	private boolean isAdminLoggedIn = false;
 	private List<Book> bookStorage = new ArrayList<Book>();
+	private List<CD> CDStorage = new ArrayList<CD>();
 	private List<User> userStorage = new ArrayList<User>();
 	private DateServer dateServer = new DateServer();
 	private EmailServer emailServer = new EmailServer();
@@ -17,6 +18,10 @@ public class LibraryApp {
 
 	public List<Book> getBooks() {
 		return bookStorage;
+	}
+	
+	public List<CD> getCDs() {
+		return CDStorage;
 	}
 
 	public List<User> getUsers() {
@@ -42,6 +47,14 @@ public class LibraryApp {
 
 		getBooks().add(book);
 	}
+	
+	public void addCD(CD cd) throws OperationNotAllowedException {
+		if (isAdminLoggedIn == false)
+			throw new OperationNotAllowedException("Administrator login required");
+
+		getCDs().add(cd);
+	}
+	
 
 	public List<Book> search(String searchText) {
 		List<Book> searchResult = new ArrayList<Book>();
