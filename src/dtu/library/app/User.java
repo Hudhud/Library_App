@@ -14,13 +14,13 @@ public class User {
 
 	private Address address;
 
-	private Book book;
+	private Medium medium;
 
-	private List<Book> borrowedBooks = new ArrayList<Book>();
+	private List<Medium> borrowedMedia = new ArrayList<Medium>();
 
-	private boolean userHasOverdueBook = false;
+	private boolean userHasOverdueMedium = false;
 
-	private int overdueBooks;
+	private int overdueMedia;
 
 	private int fine;
 
@@ -50,24 +50,24 @@ public class User {
 		return address;
 	}
 
-	public void borrowBook(Book book, Calendar date) {
-		book.setDateBooked(date);
-		borrowedBooks.add(book);
+	public void borrowMedium(Medium medium, Calendar date) {
+		medium.setDateBooked(date);
+		borrowedMedia.add(medium);
 	}
 
-	public boolean hasOverdueBooks(Calendar currentDate) {
+	public boolean hasOverdueMedia(Calendar currentDate) {
 		System.out.println(currentDate.getTime());
-		for (Book book : borrowedBooks) {
+		for (Medium medium : borrowedMedia) {
 
-			long daysDiff = (currentDate.getTime().getTime() - book.getDateBooked().getTime().getTime()) / 1000;
+			long daysDiff = (currentDate.getTime().getTime() - medium.getDateBooked().getTime().getTime()) / 1000;
 
 			if (daysDiff > 86400 * 28) {
-				userHasOverdueBook = true;
-				overdueBooks++;
+				userHasOverdueMedium = true;
+				overdueMedia++;
 				fine += 100;
 			}
 		}
-		return userHasOverdueBook;
+		return userHasOverdueMedium;
 	}
 
 	public int getUserFine() {
@@ -84,14 +84,12 @@ public class User {
 		fine = 0;
 	}
 
-	public int getOverdueBooks() {
-		return overdueBooks;
+	public int getOverdueMedia() {
+		return overdueMedia;
 	}
 	
-	public List<Book> getBorrowedBooks(){
-		System.out.println("SS "+ borrowedBooks.size());
-		return borrowedBooks;
-		
+	public List<Medium> getBorrowedMedia(){
+		return borrowedMedia;		
 	}
 
 }

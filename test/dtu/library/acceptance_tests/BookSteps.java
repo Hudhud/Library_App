@@ -8,6 +8,7 @@ import java.util.List;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import dtu.library.app.Medium;
 import dtu.library.app.Book;
 import dtu.library.app.ErrorMessageHolder;
 import dtu.library.app.Helper;
@@ -23,8 +24,8 @@ public class BookSteps {
 
 	private LibraryApp libraryApp;
 
-	private Book book;
-	private List<Book> books;
+	private Medium medium;
+	private List<Medium> books;
 	private ErrorMessageHolder errorMessageHolder;
 	private Helper helper;
 	private MockDateHolder mockDateHolder;
@@ -55,20 +56,20 @@ public class BookSteps {
 
 	@Given("^I have a book with title \"([^\"]*)\", author \"([^\"]*)\", and signature \"([^\"]*)\"$")
 	public void iHaveABookWithTitleAuthorAndSignature(String title, String author, String signature) throws Exception {
-		book = new Book(title, author, signature);
+		medium = new Book(title, author, signature);
 	}
 
 	@Given("^these books are contained in the library$")
 	public void theseBooksAreContainedInTheLibrary(List<List<String>> books) throws Exception {
 		for (List<String> bookInfo : books) {
-			libraryApp.addBook(new Book(bookInfo.get(0), bookInfo.get(1), bookInfo.get(2)));
+			libraryApp.addMedium(new Book(bookInfo.get(0), bookInfo.get(1), bookInfo.get(2)));
 		}
 	}
 
 	@When("^I add the book$")
 	public void iAddTheBook() throws Exception {
 		try {
-			libraryApp.addBook(book);
+			libraryApp.addMedium(medium);
 		} catch (OperationNotAllowedException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
@@ -77,10 +78,10 @@ public class BookSteps {
 	@Then("^the book with title \"([^\"]*)\", author \"([^\"]*)\", and signature \"([^\"]*)\" is added to the library$")
 	public void theBookWithTitleAuthorAndSignatureIsAddedToTheLibrary(String title, String author, String signature)
 			throws Exception {
-		assertEquals(title, book.getTitle());
-		assertEquals(author, book.getAuthor());
-		assertEquals(signature, book.getSignature());
-		assertTrue(libraryApp.getBooks().contains(book));
+		assertEquals(title, medium.getTitle());
+		assertEquals(author, medium.getAuthor());
+		assertEquals(signature, medium.getSignature());
+		assertTrue(libraryApp.getMedia().contains(medium));
 	}
 
 	@Then("^I get the error message \"([^\"]*)\"$")
@@ -91,8 +92,8 @@ public class BookSteps {
 	@Given("^the library has a book with title \"([^\"]*)\", author \"([^\"]*)\", and signature \"([^\"]*)\"$")
 	public void theLibraryHasABookWithTitleAuthorAndSignature(String title, String author, String signature)
 			throws Exception {
-		Book book = new Book(title, author, signature);
-		libraryApp.addBook(book);
+		Medium book = new Book(title, author, signature);
+		libraryApp.addMedium(book);
 	}
 
 	@When("^I search for the text \"([^\"]*)\"$")
@@ -114,18 +115,18 @@ public class BookSteps {
 	@Then("^I find a book with signatures \"([^\"]*)\" and \"([^\"]*)\"$")
 	public void iFindABookWithSignaturesAnd(String signature1, String signature2) throws Exception {
 		assertEquals(2, books.size());
-		Book book1 = books.get(0);
-		Book book2 = books.get(1);
+		Medium book1 = books.get(0);
+		Medium book2 = books.get(1);
 		assertTrue((book1.getSignature().equals(signature1) && book2.getSignature().equals(signature2))
 				|| (book1.getSignature().equals(signature2) && book2.getSignature().equals(signature1)));
 	}
 
 	@Given("the user has borrowed a book")
 	public void the_user_has_borrowed_a_book() throws OperationNotAllowedException, TooManyBooksException {
-		book = new Book("The coding way", "Coder", "Random");
+		medium = new Book("The coding way", "Coder", "Random");
 		helper.setUser(new User("123456", "tester", "randommail"));
-		libraryApp.addBooksToLibrary(Arrays.asList(book));
-		libraryApp.borrowBook(book, helper.getUser());
+		libraryApp.addMediaToLibrary(Arrays.asList(medium));
+		libraryApp.borrowMedium(medium, helper.getUser());
 	}
 
 	@Given("{int} days have passed")
@@ -139,7 +140,7 @@ public class BookSteps {
 
 	@Then("the user has overdue books")
 	public void the_user_has_overdue_books() {
-		assertTrue(libraryApp.userHasOverdueBooks(helper.getUser()));
+		assertTrue(libraryApp.userHasOverdueMedia(helper.getUser()));
 	}
 
 	@Then("the user has to pay a fine of {int} DKK")
@@ -159,10 +160,10 @@ public class BookSteps {
 
 	@Given("the user has overdue book\\(s)")
 	public void the_user_has_overdue_book_s() throws OperationNotAllowedException {
-		book = new Book("The coding way", "Coder", "Random");
+		medium = new Book("The coding way", "Coder", "Random");
 		helper.setUser(new User("123456", "tester", "randommail"));
-		libraryApp.addBooksToLibrary(Arrays.asList(book));
-		libraryApp.borrowBook(book, helper.getUser());
+		libraryApp.addMediaToLibrary(Arrays.asList(medium));
+		libraryApp.borrowMedium(medium, helper.getUser());
 		mockDateHolder.advanceDateByDays(29);
 
 	}
@@ -170,8 +171,8 @@ public class BookSteps {
 	@When("the user borrows a book")
 	public void the_user_borrows_a_book() throws Exception {
 		try {
-			libraryApp.userHasOverdueBooks(helper.getUser());
-			libraryApp.borrowBook(book, helper.getUser());
+			libraryApp.userHasOverdueMedia(helper.getUser());
+			libraryApp.borrowMedium(medium, helper.getUser());
 		} catch (OperationNotAllowedException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
@@ -184,19 +185,19 @@ public class BookSteps {
 
 	@Given("the user has a fine\\(s) of {int}kr")
 	public void theUserHasAFineSOfKr(int fine) throws OperationNotAllowedException {
-		book = new Book("The coding way", "Coder", "Random");
+		medium = new Book("The coding way", "Coder", "Random");
 		helper.setUser(new User("123456", "tester", "randommail"));
-		libraryApp.addBooksToLibrary(Arrays.asList(book));
-		libraryApp.borrowBook(book, helper.getUser());
+		libraryApp.addMediaToLibrary(Arrays.asList(medium));
+		libraryApp.borrowMedium(medium, helper.getUser());
 		mockDateHolder.advanceDateByDays(29);
 	}
 	
 	@Given("User has an overdue book")
 	public void user_has_an_overdue_book() throws OperationNotAllowedException {
-		book = new Book("The coding way", "Coder", "Random");
+		medium = new Book("The coding way", "Coder", "Random");
 		helper.setUser(new User("123456", "tester", "randommail"));
-		libraryApp.addBooksToLibrary(Arrays.asList(book));
-		libraryApp.borrowBook(book, helper.getUser());
+		libraryApp.addMediaToLibrary(Arrays.asList(medium));
+		libraryApp.borrowMedium(medium, helper.getUser());
 		mockDateHolder.advanceDateByDays(29);
 	}
 

@@ -34,7 +34,7 @@ public class UnregisterUserSteps {
 	
 	@Given("the user does not have any borrowed books")
 	public void the_user_does_not_have_any_borrowed_books() {
-	    assertTrue(libraryApp.getUserBorrowedBooks(user).size() == 0);
+	    assertTrue(libraryApp.getUserBorrowedMedia(user).size() == 0);
 	}
 
 	@Given("the user does not have any fines")

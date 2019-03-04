@@ -8,7 +8,7 @@ import java.util.List;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import dtu.library.app.Book;
+import dtu.library.app.Medium;
 import dtu.library.app.CD;
 import dtu.library.app.ErrorMessageHolder;
 import dtu.library.app.Helper;
@@ -41,7 +41,10 @@ public class CDSteps {
 	@When("I add the cd")
 	public void i_add_the_cd() {
 		try {
-			libraryApp.addCD(cd);
+			if (libraryApp.adminLoggedIn() == false)
+				throw new OperationNotAllowedException("Administrator login required");
+			
+			libraryApp.addMedium(cd);
 		} catch (OperationNotAllowedException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}

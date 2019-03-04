@@ -9,19 +9,19 @@ import javax.naming.directory.SearchResult;
 public class LibraryApp {
 
 	private boolean isAdminLoggedIn = false;
-	private List<Book> bookStorage = new ArrayList<Book>();
+	private List<Medium> mediumStorage = new ArrayList<Medium>();
 	private List<CD> CDStorage = new ArrayList<CD>();
 	private List<User> userStorage = new ArrayList<User>();
 	private DateServer dateServer = new DateServer();
 	private EmailServer emailServer = new EmailServer();
 	private Helper helper;
 
-	public List<Book> getBooks() {
-		return bookStorage;
+	public List<Medium> getMedia() {
+		return mediumStorage;
 	}
 	
-	public List<CD> getCDs() {
-		return CDStorage;
+	public List<Medium> getCDs() {
+		return getMedia();
 	}
 
 	public List<User> getUsers() {
@@ -41,30 +41,22 @@ public class LibraryApp {
 		isAdminLoggedIn = false;
 	}
 
-	public void addBook(Book book) throws OperationNotAllowedException {
+	public void addMedium(Medium medium) throws OperationNotAllowedException {
 		if (isAdminLoggedIn == false)
 			throw new OperationNotAllowedException("Administrator login required");
 
-		getBooks().add(book);
+		getMedia().add(medium);
 	}
 	
-	public void addCD(CD cd) throws OperationNotAllowedException {
-		if (isAdminLoggedIn == false)
-			throw new OperationNotAllowedException("Administrator login required");
-
-		getCDs().add(cd);
-	}
-	
-
-	public List<Book> search(String searchText) {
-		List<Book> searchResult = new ArrayList<Book>();
+	public List<Medium> search(String searchText) {
+		List<Medium> searchResult = new ArrayList<Medium>();
 
 		if (adminLoggedIn() == true || adminLoggedIn() == false) {
 
-			for (Book book : getBooks()) {
-				if (book.getSignature().contains(searchText) || book.getTitle().contains(searchText)
-						|| book.getAuthor().contains(searchText)) {
-					searchResult.add(book);
+			for (Medium medium : getMedia()) {
+				if (medium.getSignature().contains(searchText) || medium.getTitle().contains(searchText)
+						|| medium.getAuthor().contains(searchText)) {
+					searchResult.add(medium);
 				}
 			}
 		}
@@ -108,25 +100,25 @@ public class LibraryApp {
 		return dateServer.getDate();
 	}
 
-	public void borrowBook(Book book, User user) throws OperationNotAllowedException {
+	public void borrowMedium(Medium medium, User user) throws OperationNotAllowedException {
 
-		if (userHasOverdueBooks(user) == true || userHasFine(user) == true)
+		if (userHasOverdueMedia(user) == true || userHasFine(user) == true)
 			throw new OperationNotAllowedException("You are not eligible to borrow a book");
 
-		user.borrowBook(book, getDate());
+		user.borrowMedium(medium, getDate());
 	}
 
-	public boolean userHasOverdueBooks(User user) {
-		return user.hasOverdueBooks(getDate());
+	public boolean userHasOverdueMedia(User user) {
+		return user.hasOverdueMedia(getDate());
 	}
 
-	public void addBooksToLibrary(List<Book> exampleBooks) throws OperationNotAllowedException {
+	public void addMediaToLibrary(List<Medium> exampleMedia) throws OperationNotAllowedException {
 		boolean adminLoggedIn = adminLoggedIn();
 		if (!adminLoggedIn) {
 			adminLogin("adminadmin");
 		}
-		for (Book b : exampleBooks) {
-			addBook(b);
+		for (Medium b : exampleMedia) {
+			addMedium(b);
 		}
 		if (!adminLoggedIn) {
 			adminLogout();
@@ -145,11 +137,11 @@ public class LibraryApp {
 		user.payFine();
 	}
 
-	public void sendReminder(User user, int books) throws Exception {
-		emailServer.sendMail(user, books);
+	public void sendReminder(User user, int media) throws Exception {
+		emailServer.sendMail(user, media);
 	}
 
-	public List<Book> getUserBorrowedBooks(User user) {
-		return user.getBorrowedBooks();
+	public List<Medium> getUserBorrowedMedia(User user) {
+		return user.getBorrowedMedia();
 	}
 }
